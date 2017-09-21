@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CloudDrive</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+        <link rel="stylesheet" href="styles/app.css" />
+        <script type="text/javascript" src="js/app.js"></script>
+    </head>
+    <body>
+        <div id="header">
+            <i class="icon logo"></i>
+            <h1 class="title">CloudDrive</h1>
+            <div id="search-bar">
+                <input type="text" placeholder="Search..." />
+            </div>
+            <div id="profile">
+                <span>Name</span>
+                <span id="logout-btn">logout</span>
+            </div>
+        </div>
+        <div id="subheader">
+            <button id="upload">UPLOAD</button>
+            <div id="filex-controls" class="controls">
+                <svg viewBox="0 0 48 48" id="dir-back">
+                    <path class="back-arrow-icon" fill="#DDDDDD" d="M41.73,20H16.372l7.561-7.64c0.972-0.972,0.972-2.602,0-3.574l-1.513-1.532c-0.973-0.972-2.563-0.982-3.536-0.01L3.459,22.665c-0.495,0.495-0.734,1.146-0.726,1.798c-0.01,0.654,0.23,1.308,0.726,1.804l15.426,15.425c0.972,0.972,2.563,0.971,3.535-0.001l1.514-1.514c0.972-0.972,0.972-2.555,0-3.526L16.272,29H41.73c1.925,0,3.27-1.593,3.27-3.518v-2.139C45,21.418,43.655,20,41.73,20z"/>
+                </svg>
+                <svg viewBox="0 0 48 48" id="dir-forward">
+                    <path class="forward-arrow-icon" fill="#DDDDDD" d="M6.002,29H31.36L23.8,36.61c-0.972,0.972-0.972,2.588,0,3.56l1.512,1.525c0.973,0.973,2.564,0.979,3.536,0.006l15.425-15.423c0.494-0.495,0.734-1.147,0.727-1.799c0.01-0.654-0.23-1.309-0.727-1.805L28.848,7.249c-0.973-0.972-2.563-0.971-3.535,0.001l-1.514,1.514c-0.972,0.972-0.972,2.584,0,3.556L31.46,20H6.002C4.077,20,3,21.534,3,23.459v2.139C3,27.523,4.077,29,6.002,29z"/>
+                </svg>
+                <svg viewBox="0 0 48 48" id="dir-up">
+                    <path class="up-arrow-icon" fill="#DDDDDD" d="M34.618,15.721l-9.613-9.614c-0.39-0.39-0.904-0.584-1.417-0.583c-0.514-0.001-1.028,0.193-1.418,0.583l-9.613,9.615c-0.778,0.778-0.778,2.05,0,2.828l0.788,0.788c0.778,0.778,2.008,0.778,2.787,0L21,14.425V41c0,1.1,0.983,2,2.083,2h0.854c1.1,0,2.063-0.9,2.063-2V14.271l5.033,5.065c0.777,0.778,2.035,0.778,2.813,0l0.78-0.788C35.403,17.771,35.396,16.499,34.618,15.721z"/>
+                </svg>
+            </div>
+            <input type="checkbox" class="hidden" id="view-toggle" />
+            <label id="view-controls" class="controls" for="view-toggle">
+                <i class="icon big-view" id="view-indicator"></i>
+                <i class="darrow"></i>
+                <div id="view-controls-options" class="menu">
+                    <div class="menu-opt" id="list-view-button">
+                        <i class="icon list-view"></i>
+                        <span class="menu-label">List View</span>
+                    </div>
+                    <div class="menu-opt" id="big-view-button">
+                        <i class="icon big-view"></i>
+                        <span class="menu-label">Big Icons View</span>
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div id="body">
+            <div id="left-sidebar">
+                <div id="fs">
+                </div>
+                <div class="footer">
+                    <div id="storage-bar">
+                        <div id="used-storage"></div>
+                    </div>
+                    <span id="storage-tag">Used 0 b out of 1 TB</span>
+                </div>
+            </div>
+            <div id="center">
+                <div id="content" class="big-icons">
+                    <div id="details-header">
+                        <span class="header-name">Name</span>
+                        <span class="header-size">Size</span>
+                        <span class="header-date">Last Modified</span>
+                    </div>
+                    <div id="file-drop-area" class="background-message">
+                        <i class="icon upload"></i>
+                        <h1>Drop files here to upload</h1>
+                    </div>
+                </div>
+                <div id="terminal">
+                    <textarea>$> 
+$> </textarea>
+                </div>
+            </div>
+            <div id="right-sidebar">
+            
+            </div>
+        </div>
+        <div id="progress-window">
+            <div id="uploads-title" class="title">File uploads</div>
+        </div>
+    </body>
+</html>

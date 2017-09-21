@@ -1,0 +1,26 @@
+{
+  "name": "cloud-drive",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Daniel Dakev",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^2.0.0",
+    "body-parser": "^1.17.2",
+    "child_process": "^1.0.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.4",
+    "express-fileupload": "^0.1.4",
+    "fs": "0.0.1-security",
+    "mysql": "^2.14.1",
+    "path": "^0.12.7",
+    "stream-buffers": "^3.0.1",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {},
+  "description": ""
+}

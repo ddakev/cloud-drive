@@ -1,0 +1,81 @@
+body {
+    background:     linear-gradient(45deg, #1ea5ff, #92d3ff);
+    display:        block;
+    min-width:      auto;
+    overflow-x:     hidden;
+    overflow-y:     auto;
+}
+
+#login-container {
+    display:            flex;
+    flex-flow:          column nowrap;
+    align-items:        center;
+    justify-content:    center;
+    height:             100%;
+}
+
+form {
+    display:        flex;
+    visibility:     hidden;
+    position:       absolute;
+    flex-flow:      column nowrap;
+    align-content:  stretch;
+    background:     white;
+    padding:        20px 40px;
+    border-radius:  5px;
+    margin-top:     20px;
+    min-width:      300px;
+    max-height:     0px;
+    transition:     max-height 0.5s;
+    overflow:       hidden;
+}
+
+form * {
+    display:        block;
+}
+
+#login-logo {
+    width:          256px;
+    height:         160px;
+}
+
+#login-container h1 {
+    color:          white;
+    font-weight:    bold;
+    font-family:    Montserrat, sans-serif;
+    font-size:      42pt;
+    cursor:         default;
+}
+
+form label {
+    margin-top:     10px;
+}
+
+form input {
+    background:     #eeeeee;
+    border:         none;
+    outline:        none;
+    padding:        10px 15px;
+    border-radius:  3px;
+    font-size:      12pt;
+}
+
+form .form-submit {
+    width:          100%;
+    margin:         20px 0 10px;
+}
+
+form a {
+    align-self:         center;
+    text-decoration:    none;
+    margin-top:         3px;
+    font-size:          10.5pt;
+}
+
+form .back-login-btn {
+    align-self:     flex-start;
+}
+
+#forgot-pass-btn {
+    display:none;
+}

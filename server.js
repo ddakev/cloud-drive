@@ -14,7 +14,7 @@ const express       = require('express'),
       config        = require('./config/config.js'),
       app           = express(),
       drives        = path.join(__dirname, '../cloud-drive'),
-      url           = config.url;
+      url           = (process.argv[2] && process.argv[2] === "remote" ? config.remote_url : config.local_url);
 
 var superusers = {
     ddakev: {invite: null}

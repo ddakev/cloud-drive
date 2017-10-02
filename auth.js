@@ -11,6 +11,14 @@ function getToken(len) {
     return crypto.randomBytes(len).toString('base64').replace(/\//g,'_').replace(/\+/g,'-').slice(0, len);
 }
 
+function toBase64(str) {
+    return new Buffer(str).toString('base64');
+}
+
+function fromBase64(str) {
+    return new Buffer(str, 'base64').toString('ascii');
+}
+
 function hash(password, salt) {
     let hash = crypto.createHmac('sha512', salt);
     hash.update(password);
@@ -29,5 +37,7 @@ function generateHash(password) {
 module.exports = {
     getToken: getToken,
     hash: hash,
-    generateHash: generateHash
+    generateHash: generateHash,
+    toBase64: toBase64,
+    fromBase64: fromBase64
 }

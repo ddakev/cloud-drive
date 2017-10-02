@@ -14,7 +14,7 @@ const express       = require('express'),
       config        = require('./config/config.js'),
       app           = express(),
       drives        = path.join(__dirname, '../cloud-drive'),
-      url           = config.url;
+      url           = (process.argv[2] && process.argv[2] === "remote" ? config.remote_url : config.local_url);
 
 var superusers = {
     ddakev: {invite: null}
@@ -87,6 +87,38 @@ app.get('/', function(req, res) {
 
 app.get('/login', function(req, res) {
     res.sendFile(__dirname + "/login.html");
+});
+
+app.get('/api/code', function(req, res) {
+    fs.readFile("code.html", function(err, data) {
+        if(err) {
+            res.send(err);
+            return;
+        }
+        let html = `${data}`;
+        res.send(html.replace("${path}", url).replace("${codefile}", ""));
+    });
+});
+
+app.get('/api/code/:file', function(req, res) {
+    let file = auth.fromBase64(req.params.file);
+    let filepath = path.join(drives, req.username, file);
+    fs.readFile("code.html", function(err, data) {
+        if(err) {
+            res.send(err);
+            return;
+        }
+        let html = `${data}`;
+        fs.readFile(filepath, function(err, data) {
+            if(err) {
+                res.send(err);
+                return;
+            }
+            let code = `${data}`;
+            code = code.replace(/\\/g, "\\\\").replace(/\r?\n|\r/g, "\\n").replace(/\"/g, "\\\"").replace(/\t/g, "\\t").replace(/\<\/script\>/g, "\\<\\/script\\>");
+            res.send(html.replace(/\$\{path\}/g, url).replace(/\$\{codefile\}/g, code).replace(/\$\{language\}/g, codeLang(file)));
+        });
+    })
 });
 
 app.post('/login', function(req, res) {
@@ -216,50 +248,102 @@ app.get('/invite', function(req, res) {
 // Get a list of files, and information about them, in directory specified by req.body.path; separate them into directories and files,
 // and mark directories with subdirectories
 app.post('/api/files', function(req, res) {
+    let now = Date.now();
+    console.log("Request received: " + now);
     let root = path.join(drives, req.username);
     fs.readdir(path.join(root, req.body.path), function(err, files) {
         if(err) {
             res.send("Error!");
         }
         else {
-            let dirList = [];
-            let fileList = [];
+            let waitlist = [];
             for(let i=0; i<files.length; i++) {
-                let info = fs.statSync(path.join(root, req.body.path, files[i]));
-                if(info.isDirectory()) {
-                    let subFiles = fs.readdirSync(path.join(root, req.body.path, files[i]));
-                    let containSubDirs = false;
-                    for(let j=0; j<subFiles.length; j++) {
-                        if(fs.statSync(path.join(root, req.body.path, files[i], subFiles[j])).isDirectory()) {
-                            containSubDirs = true;
-                            break;
+                waitlist.push(new Promise(function(resolve, reject) {
+                    fs.stat(path.join(root, req.body.path, files[i]), function(err, info) {
+                        if(err) {
+                            reject(err);
+                            return;
                         }
-                    }
-                    dirList.push({
-                        filename: files[i],
-                        info: info,
-                        hasSubs: containSubDirs
-                    })
-                }
-                else {
-                    fileList.push({
-                        filename: files[i],
-                        info: info
+                        if(info.isDirectory()) {
+                            fs.readdir(path.join(root, req.body.path, files[i]), function(err, subFiles) {
+                                if(err) {
+                                    reject(err);
+                                    return;
+                                }
+                                let subspromises = [];
+                                for(let j=0; j<subFiles.length; j++) {
+                                    subspromises.push(new Promise(function(resolve, reject) {
+                                        fs.stat(path.join(root, req.body.path, files[i], subFiles[j]), function(err, stats) {
+                                            if(err) {
+                                                reject(err);
+                                                return;
+                                            }
+                                            if(stats.isDirectory()) {
+                                                resolve(true);
+                                            }
+                                            else resolve(false);
+                                        });
+                                    }));
+                                }
+                                Promise.all(subspromises).then(function(vals) {
+                                    let containSubDirs = false;
+                                    for(let i=0; i<vals.length; i++) {
+                                        containSubDirs |= vals[i];
+                                    }
+                                    resolve({
+                                        type: "directory",
+                                        data: {
+                                            filename: files[i],
+                                            info: info,
+                                            hasSubs: containSubDirs
+                                        }
+                                    });
+                                }).catch(function(err) {
+                                    reject(err);
+                                });
+                            });
+                        }
+                        else {
+                            resolve({
+                                type: "file",
+                                data: {
+                                    filename: files[i],
+                                    info: info
+                                }
+                            });
+                        }
                     });
-                }
+                }));
             }
-            res.send({directories: dirList, files: fileList});
+            Promise.all(waitlist).then(function(result) {
+                let dirList = [];
+                let fileList = [];
+                for(let i=0; i<result.length; i++) {
+                    if(result[i].type == "directory") {
+                        dirList.push(result[i].data);
+                    }
+                    else {
+                        fileList.push(result[i].data);
+                    }
+                }
+                res.send({directories: dirList, files: fileList});
+                console.log("Response sent: " + Date.now());
+                console.log("Delta: " + (Date.now() - now));
+            }).catch(function(err) {
+                res.send(err);
+            });
         }
     });
 });
 
 // Get size of a directory specified by req.body.path
 app.post('/api/size', function(req, res) {
-    getSize(path.join(drives, req.username, req.body.path)).then(function(size) {
+    res.send({size: 0});
+    /*getSize(path.join(drives, req.username, req.body.path)).then(function(size) {
         res.send({size: size});
     }).catch(function(err) {
         res.send(err);
-    });
+    });*/
 });
 
 // Upload file request
@@ -600,4 +684,36 @@ function copyRecursively(fromPath, toPath, callback) {
             callback(err);
         });
     });
+}
+
+function codeLang(fname) {
+    let ext = fname.substring(fname.lastIndexOf(".")+1).toLowerCase();
+    switch(ext) {
+        case "js":
+            return "javascript";
+        case "css":
+            return "css";
+        case "html": case "htm":
+            return "html";
+        case "json":
+            return "json";
+        case "cpp":
+            return "cpp";
+        case "c":
+            return "c";
+        case "cs":
+            return "csharp";
+        case "class":
+            return "java";
+        case "md":
+            return "markdown";
+        case "php":
+            return "php";
+        case "py":
+            return "python";
+        case "xml":
+            return "xml";
+        default:
+            return "plaintext";
+    }
 }

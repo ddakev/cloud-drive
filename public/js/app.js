@@ -180,6 +180,8 @@ function init() {
                 markFile();
             }
             let options = [
+                {label: "Edit", icon: "edit", action: function() {openEditor(marked);}},
+                "line",
                 {label: "Rename", icon: "rename", action: function() {rename(target);}},
                 "line",
                 {label: "Cut", icon: "cut", action: function() {cut(marked);}},
@@ -929,6 +931,16 @@ function paste() {
     }
 }
 
+function openEditor(fileItems) {
+    for(let i=0; i<fileItems.length; i++) {
+        let filename = fileItems[i].getElementsByClassName("file-name")[0].textContent;
+        if(isTextFile(filename)) {
+            let base64 = window.btoa(globalPath + filename);
+            window.open(`${url}/code/${base64}`, '_blank');
+        }
+    }
+}
+
 function generateMenu(menu, options) {
     options.forEach(function(opt) {
         if(opt == "line") {
@@ -1093,6 +1105,11 @@ function fileType(fname) {
         default:
             return "File";
     }
+}
+
+function isTextFile(fname) {
+    let type = fileType(fname);
+    return type == "Text file" || type == "HTML file" || type == "Javascript file" || type == "JSON file" || type == "CSS file" || type == "C++ file" || type == "C file" || type == "File";
 }
 
 function parseDate(datestring) {
